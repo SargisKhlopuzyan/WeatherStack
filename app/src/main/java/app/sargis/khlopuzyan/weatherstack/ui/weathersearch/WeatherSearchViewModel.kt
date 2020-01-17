@@ -1,4 +1,4 @@
-package app.sargis.khlopuzyan.weatherstack.ui.search
+package app.sargis.khlopuzyan.weatherstack.ui.weathersearch
 
 import android.view.View
 import androidx.appcompat.widget.SearchView
@@ -50,8 +50,8 @@ class WeatherSearchViewModel constructor(var weatherSearchRepository: WeatherSea
     /**
      * Handles weather list item click
      * */
-    fun onWeatherClick(resultWeather: ResultWeather) {
-        openCachedWeatherLiveData.value = resultWeather.current
+    fun onCurrentClick(current: Current) {
+        openCachedWeatherLiveData.value = current
     }
 
     val onQueryTextListener = object : SearchView.OnQueryTextListener {

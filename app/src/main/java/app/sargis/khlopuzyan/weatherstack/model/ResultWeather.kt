@@ -70,7 +70,7 @@ data class Location(
 data class Current(
 
     @PrimaryKey(autoGenerate = true)
-    private var id: Long = 0.toLong(),
+    var id: Long = 0.toLong(),
 
     var queryId: String,
 

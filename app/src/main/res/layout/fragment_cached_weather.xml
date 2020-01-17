@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="app.sargis.khlopuzyan.weatherstack.ui.main.CachedWeatherModel" />
+            type="app.sargis.khlopuzyan.weatherstack.ui.cachedweather.CachedWeatherViewModel" />
 
     </data>
 

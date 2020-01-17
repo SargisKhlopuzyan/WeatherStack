@@ -4,9 +4,11 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
-            type="app.sargis.khlopuzyan.weatherstack.ui.search.WeatherSearchViewModel" />
+            type="app.sargis.khlopuzyan.weatherstack.ui.weathersearch.WeatherSearchViewModel" />
 
     </data>
 

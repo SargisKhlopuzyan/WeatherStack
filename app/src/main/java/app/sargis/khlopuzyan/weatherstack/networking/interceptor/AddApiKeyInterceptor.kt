@@ -16,7 +16,7 @@ class AddApiKeyInterceptor @Inject constructor() : Interceptor {
         val original = chain.request()
         val httpUrl = original.url
         val newUrl = httpUrl.newBuilder()
-            .addQueryParameter("key", apiKey)
+            .addQueryParameter("access_key", accessKey)
             .build()
         val newRequest = original.newBuilder()
             .url(newUrl)
@@ -25,7 +25,7 @@ class AddApiKeyInterceptor @Inject constructor() : Interceptor {
     }
 
     companion object {
-        private const val apiKey = BuildConfig.api_key
+        private const val accessKey = BuildConfig.access_key
     }
 
 }

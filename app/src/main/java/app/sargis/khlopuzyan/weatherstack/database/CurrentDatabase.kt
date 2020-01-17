@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import app.sargis.khlopuzyan.weatherstack.database.converter.ListConverter
 import app.sargis.khlopuzyan.weatherstack.database.dao.CurrentDAO
 import app.sargis.khlopuzyan.weatherstack.model.Current
 
@@ -12,12 +14,9 @@ import app.sargis.khlopuzyan.weatherstack.model.Current
  *
  * @author Sargis Khlopuzyan (sargis.khlopuzyan@fcc.am)
  */
-//@TypeConverters(
-//    ImageListConverter::class,
-//    TrackListConverter::class,
-//    ArtistConverter::class,
-//    ItemDatabaseStateConverter::class
-//)
+@TypeConverters(
+    ListConverter::class
+)
 @Database(entities = [Current::class], version = 1, exportSchema = false)
 abstract class CurrentDatabase : RoomDatabase() {
 

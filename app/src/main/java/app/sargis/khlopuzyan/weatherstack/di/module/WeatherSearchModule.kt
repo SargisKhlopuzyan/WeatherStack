@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import app.sargis.khlopuzyan.weatherstack.di.annotation.ViewModelKey
 import app.sargis.khlopuzyan.weatherstack.repository.WeatherSearchRepository
-import app.sargis.khlopuzyan.weatherstack.ui.search.WeatherSearchFragment
-import app.sargis.khlopuzyan.weatherstack.ui.search.WeatherSearchViewModel
+import app.sargis.khlopuzyan.weatherstack.ui.weathersearch.WeatherSearchFragment
+import app.sargis.khlopuzyan.weatherstack.ui.weathersearch.WeatherSearchViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
@@ -27,7 +27,7 @@ interface WeatherSearchModule {
         @Provides
         @IntoMap
         @ViewModelKey(WeatherSearchViewModel::class)
-        fun provideSearchViewModel(
+        fun provideWeatherSearchViewModel(
             weatherSearchRepository: WeatherSearchRepository
         ): ViewModel = WeatherSearchViewModel(weatherSearchRepository)
     }
@@ -35,7 +35,7 @@ interface WeatherSearchModule {
     @Module
     class InjectViewModel {
         @Provides
-        fun provideSearchViewModel(
+        fun provideWeatherSearchViewModel(
             factory: ViewModelProvider.Factory,
             target: WeatherSearchFragment
         ) = ViewModelProvider(target, factory)[WeatherSearchViewModel::class.java]

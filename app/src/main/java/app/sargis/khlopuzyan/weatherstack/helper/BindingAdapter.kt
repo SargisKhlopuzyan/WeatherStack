@@ -5,6 +5,7 @@ package app.sargis.khlopuzyan.weatherstack.helper
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.BindingAdapter
@@ -39,22 +40,22 @@ fun <T> RecyclerView.setDataLoadingState(dataLoadingState: DataLoadingState?) {
     }
 }
 
-//@BindingAdapter("setTrackListData")
-//fun TextView.setTrackListData(tracks: List<Track>?) {
-//
-//    tracks?.let {
-//        var tracksStringBuilder = StringBuilder()
-//
-//        for ((index, track) in tracks.withIndex()) {
-//            if (index < tracks.size - 1)
-//                tracksStringBuilder.append("${track.name}\n")
-//            else {
-//                tracksStringBuilder.append("${track.name}")
-//            }
-//        }
-//        text = tracksStringBuilder.toString()
-//    }
-//}
+@BindingAdapter("setWeatherDescriptions")
+fun TextView.setWeatherDescriptions(weatherDescriptions: List<String>?) {
+
+    weatherDescriptions?.let {
+        var tracksStringBuilder = StringBuilder()
+
+        for ((index, weatherDescription) in weatherDescriptions.withIndex()) {
+            if (index < weatherDescriptions.size - 1)
+                tracksStringBuilder.append("${weatherDescription}\n")
+            else {
+                tracksStringBuilder.append("$weatherDescription")
+            }
+        }
+        text = tracksStringBuilder.toString()
+    }
+}
 
 @BindingAdapter("setImageResource")
 fun ImageView.setImageResource(resource: String?) {

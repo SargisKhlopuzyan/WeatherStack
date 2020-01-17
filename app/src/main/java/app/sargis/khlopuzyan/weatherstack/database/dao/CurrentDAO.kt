@@ -12,8 +12,6 @@ import app.sargis.khlopuzyan.weatherstack.model.Current
 @Dao
 interface CurrentDAO {
 
-    fun getItemDAO(): CurrentDAO?
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertCurrent(current: Current): Long
 

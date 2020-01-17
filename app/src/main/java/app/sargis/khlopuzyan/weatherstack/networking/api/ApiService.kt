@@ -3,6 +3,7 @@ package app.sargis.khlopuzyan.weatherstack.networking.api
 import app.sargis.khlopuzyan.weatherstack.model.ResultWeather
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Query
 import retrofit2.http.Url
 
 /**
@@ -12,9 +13,9 @@ import retrofit2.http.Url
  */
 interface ApiService {
 
-    @GET("current?&q=")
+    @GET("current?")
     suspend fun getCurrentWeatherData(
-        @Url location: String
+        @Query(value = "query") query: String
     ): Response<ResultWeather>
 
 }
