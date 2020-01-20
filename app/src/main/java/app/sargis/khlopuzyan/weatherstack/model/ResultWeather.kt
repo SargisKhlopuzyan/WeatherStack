@@ -1,9 +1,13 @@
 package app.sargis.khlopuzyan.weatherstack.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import app.sargis.khlopuzyan.weatherstack.database.converter.ListConverter
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.android.parcel.Parcelize
 
 @JsonClass(generateAdapter = true)
 data class ResultWeather(
@@ -66,13 +70,14 @@ data class Location(
 )
 
 @Entity(tableName = "current")
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class Current(
 
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0.toLong(),
 
-    var queryId: String,
+    var queryId: String? = "",
 
     @Json(name = "cloudcover")
     val cloudCover: Int,
@@ -108,9 +113,11 @@ data class Current(
     val weatherCode: Int,
 
     @Json(name = "weather_descriptions")
+    @TypeConverters(ListConverter::class)
     val weatherDescriptions: List<String>,
 
     @Json(name = "weather_icons")
+    @TypeConverters(ListConverter::class)
     val weatherIcons: List<String>,
 
     @Json(name = "wind_degree")
@@ -121,4 +128,4 @@ data class Current(
 
     @Json(name = "wind_speed")
     val windSpeed: Int
-)
+) : Parcelable

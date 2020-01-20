@@ -1,13 +1,22 @@
 package app.sargis.khlopuzyan.weatherstack.ui.weathersearch
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.commit
+import androidx.lifecycle.observe
+import androidx.recyclerview.widget.LinearLayoutManager
 import app.sargis.khlopuzyan.weatherstack.R
 import app.sargis.khlopuzyan.weatherstack.databinding.FragmentWeatherSearchBinding
+import app.sargis.khlopuzyan.weatherstack.model.Current
+import app.sargis.khlopuzyan.weatherstack.ui.cachedweather.CachedWeatherFragment
 import app.sargis.khlopuzyan.weatherstack.ui.common.DaggerFragmentX
+import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
 class WeatherSearchFragment : DaggerFragmentX() {
@@ -39,6 +48,69 @@ class WeatherSearchFragment : DaggerFragmentX() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.viewModel = viewModel
+
+        setupToolbar()
+        setupRecyclerView()
+        setupSearchView()
+        setupObservers()
+    }
+
+    private fun setupToolbar() {
+        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+    }
+
+    private fun setupRecyclerView() {
+        val layoutManager = LinearLayoutManager(context)
+        binding.recyclerView.layoutManager = layoutManager
+        binding.recyclerView.hasFixedSize()
+
+        val adapter = WeatherSearchAdapter(
+            viewModel
+        )
+        adapter.setHasStableIds(true)
+        binding.recyclerView.adapter = adapter
+    }
+
+    private fun setupSearchView() {
+        val requestFocus: Boolean = arguments?.getBoolean(ARG_REQUEST_FOCUS, false) ?: false
+        if (requestFocus) {
+            binding.searchView.isIconified = false
+            arguments?.putBoolean(ARG_REQUEST_FOCUS, false)
+        }
+    }
+
+    private fun setupObservers() {
+        viewModel.openCachedWeatherLiveData.observe(this) {
+            openTopAlbumsFragment(it)
+        }
+
+        viewModel.showToastLiveData.observe(this) {
+            Snackbar.make(binding.toolbar, "$it", Snackbar.LENGTH_SHORT)
+                .show()
+        }
+
+        viewModel.hideKeyboardLiveData.observe(this) {
+            hideKeyboard(it)
+        }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val inputMethodManager =
+            activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun openTopAlbumsFragment(
+        current: Current
+    ) {
+//        activity?.supportFragmentManager?.commit {
+//            replace(
+//                android.R.id.content,
+//                CachedWeatherFragment.newInstance(current),
+//                "fragment_top_albums"
+//            )
+//            addToBackStack("top_albums")
+//        }
     }
 
 }

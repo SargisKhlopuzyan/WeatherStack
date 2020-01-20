@@ -1,7 +1,6 @@
 package app.sargis.khlopuzyan.weatherstack.helper
 
 
-
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.widget.ImageView
@@ -10,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import app.sargis.khlopuzyan.weatherstack.R
 import app.sargis.khlopuzyan.weatherstack.ui.common.BindableAdapter
 import app.sargis.khlopuzyan.weatherstack.util.DataLoadingState
 import com.bumptech.glide.Glide
@@ -58,18 +58,17 @@ fun TextView.setWeatherDescriptions(weatherDescriptions: List<String>?) {
 }
 
 @BindingAdapter("setImageResource")
-fun ImageView.setImageResource(resource: String?) {
+fun ImageView.setImageResource(resource: List<String>?) {
 
-//    val placeholderId: Int =
-//        if (id == R.id.imageViewArtist) R.drawable.ic_artist else R.drawable.ic_album
-//
-//    if (resource == null || resource.isBlank()) {
-//        setImageResource(placeholderId)
-//        return
-//    }
+    val placeholderId: Int = R.drawable.ic_cloud
+
+    if (resource == null || resource.isEmpty() || resource[0].isBlank()) {
+        setImageResource(placeholderId)
+        return
+    }
 
     Glide.with(this.context)
-        .load(resource)
+        .load(resource[0])
         .apply(RequestOptions().dontTransform())
         .listener(object : RequestListener<Drawable> {
             override fun onLoadFailed(
@@ -100,6 +99,7 @@ fun ImageView.setImageResource(resource: String?) {
         })
         .fitCenter()
         .into(this)
+
 }
 
 @BindingAdapter("setOnQueryTextListener")

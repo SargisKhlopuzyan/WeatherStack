@@ -2,4 +2,7 @@
     <string name="app_name">WeatherStack</string>
     <string name="search">Search</string>
     <string name="retry">Retry</string>
+
+    <string name="wind">Wind: %s</string>
+    <string name="direction">Direction: %s</string>
 </resources>

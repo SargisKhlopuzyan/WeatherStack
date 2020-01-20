@@ -14,7 +14,8 @@ import app.sargis.khlopuzyan.weatherstack.util.DataLoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class WeatherSearchViewModel constructor(var weatherSearchRepository: WeatherSearchRepository) : ViewModel() {
+class WeatherSearchViewModel constructor(var weatherSearchRepository: WeatherSearchRepository) :
+    ViewModel() {
 
     private var location: String = ""
     private var searchQuery: String = ""
@@ -111,17 +112,22 @@ class WeatherSearchViewModel constructor(var weatherSearchRepository: WeatherSea
      * */
     private fun handleSearchResult(resultWeather: ResultWeather?) {
 
-        var currents: MutableList<Current>?
-
-        if (resultWeather?.current == null) {
-            currents = mutableListOf()
-        } else {
-            var resultCurrentWeather = resultWeather.current
-            currents = weatherLiveData.value
-            currents?.add(resultWeather.current)
-        }
+        var currents: MutableList<Current>? =
+            if (resultWeather?.current == null) {
+                mutableListOf()
+            } else {
+                resultWeather.current.queryId = resultWeather.request.query
+                mutableListOf(resultWeather.current)
+            }
 
         weatherLiveData.value = currents
+    }
+
+    /**
+     * Checks weather api has pages available
+     * */
+    fun hasExtraRow(): Boolean {
+        return (dataLoadingStateLiveData.value != null && dataLoadingStateLiveData.value != DataLoadingState.Loaded)
     }
 
 }

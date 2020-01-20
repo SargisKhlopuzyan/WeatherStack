@@ -1,11 +1,14 @@
 package app.sargis.khlopuzyan.weatherstack.networking.retrofit
 
 import app.sargis.khlopuzyan.weatherstack.BuildConfig
+import app.sargis.khlopuzyan.weatherstack.database.converter.ListConverter
 import app.sargis.khlopuzyan.weatherstack.networking.interceptor.AddApiKeyInterceptor
+import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 /**
@@ -17,7 +20,6 @@ class NetworkService {
 
     companion object {
 
-//        private const val BASE_URL = "https://api.apixu.com/v1/"
         private const val BASE_URL = "http://api.weatherstack.com/"
 
         fun initOkHttpClient(addApiKeyInterceptor: AddApiKeyInterceptor): OkHttpClient {
@@ -39,7 +41,12 @@ class NetworkService {
             Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder()
+                            .build()
+                    )
+                )
                 .build()
     }
 }
