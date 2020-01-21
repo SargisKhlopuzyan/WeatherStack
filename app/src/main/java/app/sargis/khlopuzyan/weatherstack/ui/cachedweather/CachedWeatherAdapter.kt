@@ -24,7 +24,7 @@ class CachedWeatherAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: LayoutRecyclerViewItemCachedWeathersBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
-            R.layout.layout_recycler_view_item_weather_search,
+            R.layout.layout_recycler_view_item_cached_weathers,
             parent, false
         )
         return ViewHolder(

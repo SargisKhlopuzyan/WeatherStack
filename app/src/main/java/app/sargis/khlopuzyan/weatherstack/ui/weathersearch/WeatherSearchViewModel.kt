@@ -49,7 +49,18 @@ class WeatherSearchViewModel constructor(private var weatherSearchRepository: We
     /**
      * Handles weather list item click
      * */
-    fun onCurrentClick(current: Current) {
+    fun onWeatherItemClick(current: Current) {
+
+        current.queryId?.let {
+
+            var cachedCurrent = weatherSearchRepository.getWeatherFromCache(current.queryId!!)
+
+            if (cachedCurrent == null) {
+                weatherSearchRepository.saveWeatherInCache(current)
+            }
+
+        }
+
         openCachedWeatherLiveData.value = current
     }
 

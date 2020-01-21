@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:onClick="@{()->viewModel.onCurrentClick(current)}"
+        android:onClick="@{()->viewModel.onWeatherItemClick(current)}"
         android:paddingLeft="@dimen/main_screen_padding_vertical"
         android:paddingTop="@dimen/main_screen_padding_horizontal"
         android:paddingRight="@dimen/main_screen_padding_vertical"

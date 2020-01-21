@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 interface WeatherSearchRepository {
     suspend fun searchCurrentWeather(location: String): Result<ResultWeather>
     fun saveWeatherInCache(current: Current): Long
+    fun getWeatherFromCache(queryId: String): Current?
 }
 
 /**
@@ -40,4 +41,9 @@ class WeatherSearchRepositoryImpl(
     override fun saveWeatherInCache(current: Current): Long {
         return databaseManager.saveWeatherInDatabase(current)
     }
+
+    override fun getWeatherFromCache(queryId: String): Current? {
+        return databaseManager.getWeatherFromDatabase(queryId)
+    }
+
 }
