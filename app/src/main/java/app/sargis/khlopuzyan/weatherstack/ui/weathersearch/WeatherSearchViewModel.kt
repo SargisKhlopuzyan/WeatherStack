@@ -14,7 +14,7 @@ import app.sargis.khlopuzyan.weatherstack.util.DataLoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class WeatherSearchViewModel constructor(var weatherSearchRepository: WeatherSearchRepository) :
+class WeatherSearchViewModel constructor(private var weatherSearchRepository: WeatherSearchRepository) :
     ViewModel() {
 
     private var location: String = ""
@@ -35,8 +35,6 @@ class WeatherSearchViewModel constructor(var weatherSearchRepository: WeatherSea
     fun onSearchClick(v: View) {
         hideKeyboardLiveData.value = v
         location = searchQuery
-
-        weatherLiveData.value = mutableListOf()
         searchWeather(searchQuery)
     }
 
@@ -68,40 +66,43 @@ class WeatherSearchViewModel constructor(var weatherSearchRepository: WeatherSea
     }
 
     /**
-     * Loads api next page artists
+     * Performs weather information search for the set location
      * */
     fun searchWeather(location: String? = searchQuery) {
 
-        location?.let {
+        weatherLiveData.value = mutableListOf()
 
-            viewModelScope.launch(Dispatchers.Main) {
+        if (location == null || location.isBlank()) {
+            return
+        }
 
-                dataLoadingStateLiveData.value = DataLoadingState.Loading
+        viewModelScope.launch(Dispatchers.Main) {
 
-                val resultCurrentWeather = weatherSearchRepository.searchCurrentWeather(
-                    location = location
-                )
+            dataLoadingStateLiveData.value = DataLoadingState.Loading
 
-                when (resultCurrentWeather) {
+            val resultCurrentWeather = weatherSearchRepository.searchCurrentWeather(
+                location = location
+            )
 
-                    is Result.Success -> {
-                        dataLoadingStateLiveData.value = DataLoadingState.Loaded
-                        handleSearchResult(resultCurrentWeather.data)
-                    }
+            when (resultCurrentWeather) {
 
-                    is Result.Error -> {
-                        errorMessageLiveData.value =
-                            "Something went wrong.\nError code: ${resultCurrentWeather.errorCode}"
-                        dataLoadingStateLiveData.value =
-                            DataLoadingState.Failure(Exception("${resultCurrentWeather.errorCode}"))
-                    }
+                is Result.Success -> {
+                    dataLoadingStateLiveData.value = DataLoadingState.Loaded
+                    handleSearchResult(resultCurrentWeather.data)
+                }
 
-                    is Result.Failure -> {
-                        errorMessageLiveData.value =
-                            "Something went wrong.\nCheck your internet connection"
-                        dataLoadingStateLiveData.value =
-                            DataLoadingState.Failure(resultCurrentWeather.throwable)
-                    }
+                is Result.Error -> {
+                    errorMessageLiveData.value =
+                        "Something went wrong.\nError code: ${resultCurrentWeather.errorCode}"
+                    dataLoadingStateLiveData.value =
+                        DataLoadingState.Failure(Exception("${resultCurrentWeather.errorCode}"))
+                }
+
+                is Result.Failure -> {
+                    errorMessageLiveData.value =
+                        "Something went wrong.\nCheck your internet connection"
+                    dataLoadingStateLiveData.value =
+                        DataLoadingState.Failure(resultCurrentWeather.throwable)
                 }
             }
         }
@@ -124,7 +125,7 @@ class WeatherSearchViewModel constructor(var weatherSearchRepository: WeatherSea
     }
 
     /**
-     * Checks weather api has pages available
+     * Checks weather extra row is available
      * */
     fun hasExtraRow(): Boolean {
         return (dataLoadingStateLiveData.value != null && dataLoadingStateLiveData.value != DataLoadingState.Loaded)

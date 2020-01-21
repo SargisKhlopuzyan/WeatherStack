@@ -4,8 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import app.sargis.khlopuzyan.weatherstack.R
 import app.sargis.khlopuzyan.weatherstack.databinding.LayoutRecyclerViewItemLoadingBinding
@@ -22,9 +20,10 @@ import app.sargis.khlopuzyan.weatherstack.util.DataLoadingState
  */
 class WeatherSearchAdapter(
     val viewModel: WeatherSearchViewModel
-) : ListAdapter<Current?, RecyclerView.ViewHolder>(DiffCallback()), BindableAdapter<List<Current>> {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), BindableAdapter<List<Current>> {
 
     private var dataLoadingState: DataLoadingState? = null
+    private var currentsList = mutableListOf<Current>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
@@ -71,9 +70,9 @@ class WeatherSearchAdapter(
         }
 
         return if (viewModel.hasExtraRow()) {
-            super.getItemCount() + 1
+            currentsList.size + 1
         } else {
-            super.getItemCount()
+            currentsList.size
         }
     }
 
@@ -88,7 +87,7 @@ class WeatherSearchAdapter(
                 if (dataLoadingState is DataLoadingState.Failure && (itemCount > 1) && (position == itemCount - 2)) {
                     viewModel.dataLoadingStateLiveData.value = DataLoadingState.Loaded
                 }
-                (holder as ArtistViewHolder).bindItem(getItem(position), viewModel)
+                (holder as ArtistViewHolder).bindItem(currentsList[position], viewModel)
             }
 
             R.layout.layout_recycler_view_item_loading -> {
@@ -128,11 +127,11 @@ class WeatherSearchAdapter(
     }
 
     override fun setItems(items: List<Current>?) {
-        if (items != null) {
-            submitList(items)
-        } else {
-            submitList(listOf())
+        currentsList.clear()
+        items?.let {
+            currentsList.addAll(items)
         }
+        notifyDataSetChanged()
     }
 
     override fun setDataLoadingState(newDataLoadingState: DataLoadingState?) {
@@ -163,20 +162,6 @@ class WeatherSearchAdapter(
         fun bind(viewModel: ViewModel) {
             binding.viewModel = viewModel as WeatherSearchViewModel
         }
-    }
-
-}
-
-//Callback
-
-class DiffCallback : DiffUtil.ItemCallback<Current?>() {
-
-    override fun areItemsTheSame(oldItem: Current, newItem: Current): Boolean {
-        return oldItem.queryId == newItem.queryId
-    }
-
-    override fun areContentsTheSame(oldItem: Current, newItem: Current): Boolean {
-        return oldItem == newItem
     }
 
 }

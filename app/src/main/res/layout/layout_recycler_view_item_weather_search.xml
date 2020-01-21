@@ -33,18 +33,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{current.queryId}"
+            android:textColor="@color/colorText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Nor-Nork, Yerevan" />
-
-        <TextView
-            android:id="@+id/textViewWeatherDescriptions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:setWeatherDescriptions="@{current.weatherDescriptions}"
-            app:layout_constraintStart_toStartOf="@+id/textViewQuery"
-            app:layout_constraintTop_toBottomOf="@+id/textViewQuery"
-            tools:text="Partly Cloudy" />
 
         <ImageView
             android:id="@+id/imageViewTemperature"
@@ -53,10 +45,10 @@
             android:layout_marginTop="8dp"
             android:focusable="false"
             android:scaleType="fitXY"
-            app:setImageResource="@{current.weatherIcons}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/textViewQuery"
-            app:layout_constraintTop_toBottomOf="@+id/textViewWeatherDescriptions"
+            app:layout_constraintTop_toBottomOf="@+id/textViewQuery"
+            app:setImageResource="@{current.weatherIcons}"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
@@ -67,6 +59,7 @@
             android:gravity="center_vertical"
             android:text="@{Integer.toString(current.temperature)}"
             android:textSize="48sp"
+            android:textColor="@color/colorText"
             app:layout_constraintBottom_toBottomOf="@+id/imageViewTemperature"
             app:layout_constraintStart_toEndOf="@+id/imageViewTemperature"
             app:layout_constraintTop_toTopOf="@+id/imageViewTemperature"
@@ -78,20 +71,33 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:text="ºC"
+            android:textColor="@color/colorText"
             app:layout_constraintStart_toEndOf="@+id/textViewTemperature"
             app:layout_constraintTop_toTopOf="@+id/textViewTemperature"
             tools:text="ºC" />
 
         <TextView
-            android:id="@+id/textViewWind"
+            android:id="@+id/textViewWeatherDescriptions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:gravity="center_vertical"
-            android:text="@{@string/wind(current.windSpeed)}"
-            app:layout_constraintBottom_toTopOf="@+id/textViewDirection"
+            android:textColor="@color/colorText"
+            app:layout_constraintBottom_toTopOf="@+id/textViewWind"
             app:layout_constraintStart_toEndOf="@+id/textViewTemperatureType"
             app:layout_constraintTop_toTopOf="@+id/imageViewTemperature"
+            app:setWeatherDescriptions="@{current.weatherDescriptions}"
+            tools:text="Partly Cloudy" />
+
+        <TextView
+            android:id="@+id/textViewWind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorText"
+            android:text="@{@string/wind(current.windSpeed)}"
+            app:layout_constraintBottom_toTopOf="@+id/textViewDirection"
+            app:layout_constraintStart_toStartOf="@+id/textViewWeatherDescriptions"
+            app:layout_constraintTop_toBottomOf="@+id/textViewWeatherDescriptions"
             tools:text="Wind: 3.8km/h" />
 
         <TextView
@@ -99,6 +105,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:textColor="@color/colorText"
             android:text="@{@string/direction(current.windDir)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/textViewWind"

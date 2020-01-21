@@ -22,24 +22,30 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:layout_constraintTop_toTopOf="parent">
+            app:contentInsetEnd="0dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetRight="0dp"
+            app:contentInsetStart="0dp"
+            app:contentInsetStartWithNavigation="0dp"
+            app:expandedTitleMarginStart="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_action_back">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingRight="8dp">
+                android:orientation="horizontal">
 
                 <androidx.appcompat.widget.SearchView
                     android:id="@+id/searchView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    app:defaultQueryHint="Pass city name"
-                    app:iconifiedByDefault="false"
-                    android:textCursorDrawable="@null"
                     android:imeOptions="flagNoExtractUi"
+                    android:textCursorDrawable="@null"
+                    app:defaultQueryHint="City name"
+                    app:iconifiedByDefault="false"
                     app:searchHintIcon="@null"
                     app:searchIcon="@null"
                     app:setOnQueryTextListener="@{viewModel.onQueryTextListener}" />
@@ -48,6 +54,7 @@
                     android:id="@+id/buttonToolbarSearch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     android:onClick="@{(v) -> viewModel.onSearchClick(v)}"

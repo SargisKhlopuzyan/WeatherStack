@@ -8,13 +8,11 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.commit
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.sargis.khlopuzyan.weatherstack.R
 import app.sargis.khlopuzyan.weatherstack.databinding.FragmentWeatherSearchBinding
 import app.sargis.khlopuzyan.weatherstack.model.Current
-import app.sargis.khlopuzyan.weatherstack.ui.cachedweather.CachedWeatherFragment
 import app.sargis.khlopuzyan.weatherstack.ui.common.DaggerFragmentX
 import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
@@ -57,6 +55,9 @@ class WeatherSearchFragment : DaggerFragmentX() {
 
     private fun setupToolbar() {
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        binding.toolbar.setNavigationOnClickListener {
+            activity?.onBackPressed()
+        }
     }
 
     private fun setupRecyclerView() {
@@ -81,7 +82,7 @@ class WeatherSearchFragment : DaggerFragmentX() {
 
     private fun setupObservers() {
         viewModel.openCachedWeatherLiveData.observe(this) {
-            openTopAlbumsFragment(it)
+            openCachedWeatherFragment(it)
         }
 
         viewModel.showToastLiveData.observe(this) {
@@ -100,17 +101,10 @@ class WeatherSearchFragment : DaggerFragmentX() {
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    private fun openTopAlbumsFragment(
+    private fun openCachedWeatherFragment(
         current: Current
     ) {
-//        activity?.supportFragmentManager?.commit {
-//            replace(
-//                android.R.id.content,
-//                CachedWeatherFragment.newInstance(current),
-//                "fragment_top_albums"
-//            )
-//            addToBackStack("top_albums")
-//        }
+        activity?.onBackPressed()
     }
 
 }
