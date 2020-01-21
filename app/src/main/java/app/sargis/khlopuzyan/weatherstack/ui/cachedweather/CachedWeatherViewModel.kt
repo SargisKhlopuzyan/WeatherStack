@@ -1,10 +1,13 @@
 package app.sargis.khlopuzyan.weatherstack.ui.cachedweather
 
+import android.util.Log
 import android.view.View
+import android.widget.CompoundButton
 import androidx.lifecycle.ViewModel
 import app.sargis.khlopuzyan.weatherstack.helper.SingleLiveEvent
 import app.sargis.khlopuzyan.weatherstack.model.Current
 import app.sargis.khlopuzyan.weatherstack.repository.CachedWeatherRepository
+
 
 class CachedWeatherViewModel constructor(cachedWeatherRepository: CachedWeatherRepository) : ViewModel() {
 
@@ -34,4 +37,8 @@ class CachedWeatherViewModel constructor(cachedWeatherRepository: CachedWeatherR
         openEditScreenLiveData.value = current
     }
 
+
+    fun onCheckedChange(button: CompoundButton?, check: Boolean) {
+        Log.e("LOG_TAG", "onCheckedChange: $check")
+    }
 }

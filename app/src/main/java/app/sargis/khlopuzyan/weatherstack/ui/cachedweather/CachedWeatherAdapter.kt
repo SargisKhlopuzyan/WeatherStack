@@ -9,6 +9,7 @@ import app.sargis.khlopuzyan.weatherstack.databinding.LayoutRecyclerViewItemCach
 import app.sargis.khlopuzyan.weatherstack.model.Current
 import app.sargis.khlopuzyan.weatherstack.ui.common.BindableAdapter
 import app.sargis.khlopuzyan.weatherstack.util.DataLoadingState
+import app.sargis.khlopuzyan.weatherstack.util.StateMode
 
 /**
  * Created by Sargis Khlopuzyan, on 12/18/2019.
@@ -60,6 +61,7 @@ class CachedWeatherAdapter(
         fun bindData(current: Current, viewModel: CachedWeatherViewModel) {
             binding.viewModel = viewModel
             binding.current = current
+            binding.stateMode = StateMode.Delete
         }
 
     }
