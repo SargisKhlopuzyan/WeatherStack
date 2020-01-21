@@ -37,7 +37,7 @@ abstract class CurrentDatabase : RoomDatabase() {
 
                         INSTANCE = Room.databaseBuilder(
                             context.applicationContext,
-                            CurrentDatabase::class.java, "current.db"
+                            CurrentDatabase::class.java, "current_weather.db"
                         )
                             .allowMainThreadQueries()
                             .build()

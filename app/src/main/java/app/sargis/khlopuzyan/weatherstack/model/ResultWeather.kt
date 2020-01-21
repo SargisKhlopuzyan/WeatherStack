@@ -5,11 +5,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import app.sargis.khlopuzyan.weatherstack.database.converter.ListConverter
+import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.android.parcel.Parcelize
 
-@JsonClass(generateAdapter = true)
+//@JsonClass(generateAdapter = true)
 data class ResultWeather(
 
     @Json(name = "current")
@@ -22,7 +23,7 @@ data class ResultWeather(
     val request: Request
 )
 
-@JsonClass(generateAdapter = true)
+//@JsonClass(generateAdapter = true)
 data class Request(
 
     @Json(name = "language")
@@ -38,7 +39,7 @@ data class Request(
     val unit: String
 )
 
-@JsonClass(generateAdapter = true)
+//@JsonClass(generateAdapter = true)
 data class Location(
 
     @Json(name = "country")
@@ -70,8 +71,8 @@ data class Location(
 )
 
 @Entity(tableName = "current")
-@Parcelize
-@JsonClass(generateAdapter = true)
+//@Parcelize
+//@JsonClass(generateAdapter = true)
 data class Current(
 
     @PrimaryKey(autoGenerate = true)
@@ -112,20 +113,25 @@ data class Current(
     @Json(name = "weather_code")
     val weatherCode: Int,
 
-    @Json(name = "weather_descriptions")
-    @TypeConverters(ListConverter::class)
+//    @Json(name = "weather_descriptions")
+//    @TypeConverters(ListConverter::class)
+    @SerializedName("weather_descriptions")
     val weatherDescriptions: List<String>,
 
-    @Json(name = "weather_icons")
-    @TypeConverters(ListConverter::class)
+//    @Json(name = "weather_icons")
+//    @TypeConverters(ListConverter::class)
+    @SerializedName("weather_icons")
     val weatherIcons: List<String>,
 
-    @Json(name = "wind_degree")
+//    @Json(name = "wind_degree")
+    @SerializedName("wind_degree")
     val windDegree: Int,
 
-    @Json(name = "wind_dir")
+//    @Json(name = "wind_dir")
+    @SerializedName("wind_dir")
     val windDir: String,
 
-    @Json(name = "wind_speed")
+//    @Json(name = "wind_speed")
+    @SerializedName("wind_speed")
     val windSpeed: Int
-) : Parcelable
+) /*: Parcelable*/

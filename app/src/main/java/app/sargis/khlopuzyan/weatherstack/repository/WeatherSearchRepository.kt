@@ -31,6 +31,7 @@ class WeatherSearchRepositoryImpl(
     override suspend fun searchCurrentWeather(location: String): Result<ResultWeather> =
         withContext(coroutineScope.coroutineContext) {
             try {
+                var response = apiService.getCurrentWeatherData(query = location)
                 return@withContext apiService.getCurrentWeatherData(query = location).getResult()
             } catch (ex: Exception) {
                 return@withContext Result.Failure(ex)

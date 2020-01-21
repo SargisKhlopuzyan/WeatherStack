@@ -42,10 +42,11 @@ class NetworkService {
                 .client(okHttpClient)
                 .baseUrl(BASE_URL)
                 .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder()
-                            .build()
-                    )
+                    GsonConverterFactory.create()
+//                    MoshiConverterFactory.create(
+//                        Moshi.Builder()
+//                            .build()
+//                    )
                 )
                 .build()
     }
