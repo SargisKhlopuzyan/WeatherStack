@@ -17,10 +17,6 @@
             type="boolean" />
 
         <variable
-            name="stateMode"
-            type="app.sargis.khlopuzyan.weatherstack.util.StateMode" />
-
-        <variable
             name="current"
             type="app.sargis.khlopuzyan.weatherstack.model.Current" />
 
@@ -131,13 +127,12 @@
             android:id="@+id/checkBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onCheckedChanged="@{(compoundButton, checked) -> viewModel.onCheckedChange(compoundButton, checked)}"
-            android:visibility="@{stateMode == StateMode.Delete ? View.VISIBLE : View.INVISIBLE}"
+            android:visibility="@{viewModel.stateModeLiveData == StateMode.Normal ? View.INVISIBLE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintHorizontal_chainStyle="spread"
-            app:layout_constraintStart_toEndOf="@+id/textViewWind"
+            app:layout_constraintLeft_toRightOf="@+id/textViewWind"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

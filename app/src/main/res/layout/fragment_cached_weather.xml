@@ -6,6 +6,8 @@
 
         <import type="android.view.View" />
 
+        <import type="app.sargis.khlopuzyan.weatherstack.util.StateMode" />
+
         <variable
             name="viewModel"
             type="app.sargis.khlopuzyan.weatherstack.ui.cachedweather.CachedWeatherViewModel" />
@@ -24,15 +26,70 @@
             android:background="?attr/colorPrimary"
             android:elevation="0dp"
             android:gravity="right"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@{viewModel.stateModeLiveData == StateMode.Normal ? null : @drawable/ic_action_back}">
 
-            <ImageView
-                android:id="@+id/imageViewSearch"
-                android:layout_width="?attr/actionBarSize"
-                android:layout_height="?attr/actionBarSize"
-                android:onClick="@{(v) -> viewModel.onSearchClick(v)}"
-                android:scaleType="center"
-                android:src="@drawable/ic_search" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{viewModel.stateModeLiveData == StateMode.Normal ? View.VISIBLE : View.GONE}">
+
+                <ImageView
+                    android:id="@+id/imageViewSearch"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="?attr/actionBarSize"
+                    android:onClick="@{(v) -> viewModel.onSearchClick(v)}"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_search"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/buttonToolbarEdit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/main_screen_padding_vertical"
+                    android:minWidth="@dimen/navigation_button_width"
+                    android:minHeight="0dp"
+                    android:onClick="@{(v) -> viewModel.onEditClick(v)}"
+                    android:text="@string/edit"
+                    android:textAllCaps="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{viewModel.stateModeLiveData == StateMode.Normal ? View.GONE : View.VISIBLE}">
+
+                <TextView
+                    android:id="@+id/textViewSelectedItemsCount"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@+id/buttonToolbarDelete"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/buttonToolbarDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/main_screen_padding_vertical"
+                    android:minWidth="@dimen/navigation_button_width"
+                    android:minHeight="0dp"
+                    android:onClick="@{(v) -> viewModel.onDeleteClick(v)}"
+                    android:text="@string/delete"
+                    android:textAllCaps="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -41,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:fillViewport="true"
-            app:data="@{viewModel.cachedAlbumsLiveData}"
+            app:data="@{viewModel.cachedWeathersLiveData}"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar" />

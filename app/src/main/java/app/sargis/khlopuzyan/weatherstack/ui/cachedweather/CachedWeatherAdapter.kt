@@ -1,5 +1,6 @@
 package app.sargis.khlopuzyan.weatherstack.ui.cachedweather
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -8,8 +9,12 @@ import app.sargis.khlopuzyan.weatherstack.R
 import app.sargis.khlopuzyan.weatherstack.databinding.LayoutRecyclerViewItemCachedWeathersBinding
 import app.sargis.khlopuzyan.weatherstack.model.Current
 import app.sargis.khlopuzyan.weatherstack.ui.common.BindableAdapter
+import app.sargis.khlopuzyan.weatherstack.ui.weathersearch.ItemInteractionInterface
+import app.sargis.khlopuzyan.weatherstack.ui.weathersearch.ItemTouchHelperAdapter
 import app.sargis.khlopuzyan.weatherstack.util.DataLoadingState
 import app.sargis.khlopuzyan.weatherstack.util.StateMode
+import java.util.*
+
 
 /**
  * Created by Sargis Khlopuzyan, on 12/18/2019.
@@ -17,8 +22,10 @@ import app.sargis.khlopuzyan.weatherstack.util.StateMode
  * @author Sargis Khlopuzyan (sargis.khlopuzyan@gmail.com)
  */
 class CachedWeatherAdapter(
-    val viewModel: CachedWeatherViewModel
-) : RecyclerView.Adapter<CachedWeatherAdapter.ViewHolder>(), BindableAdapter<List<Current>> {
+    val viewModel: CachedWeatherViewModel,
+    private val itemInteractionInterface: ItemInteractionInterface
+) : RecyclerView.Adapter<CachedWeatherAdapter.ViewHolder>(), BindableAdapter<List<Current>>,
+    ItemTouchHelperAdapter {
 
     private var storedWeathers = mutableListOf<Current>()
 
@@ -38,7 +45,7 @@ class CachedWeatherAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindData(storedWeathers[position], viewModel)
+        holder.bindData(storedWeathers[position], viewModel, position)
     }
 
     override fun setItems(items: List<Current>?) {
@@ -58,12 +65,60 @@ class CachedWeatherAdapter(
 
         var binding: LayoutRecyclerViewItemCachedWeathersBinding = binding
 
-        fun bindData(current: Current, viewModel: CachedWeatherViewModel) {
+        fun bindData(current: Current, viewModel: CachedWeatherViewModel, position: Int) {
             binding.viewModel = viewModel
             binding.current = current
-            binding.stateMode = StateMode.Delete
+
+            if (viewModel.stateModeLiveData.value != StateMode.Normal) {
+                binding.checkBox.isChecked = current.isSelected
+            }
+
+            binding.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+                current.isSelected = isChecked
+                if (isChecked) {
+                    viewModel.addCurrentInSelected(current)
+                } else {
+                    viewModel.removeCurrentFromSelected(current)
+                }
+            }
         }
 
+    }
+
+    override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
+
+        Log.e("LOG_TAG", "onItemMove")
+
+        if (fromPosition < toPosition) {
+            for (i in fromPosition until toPosition) {
+                Collections.swap(viewModel.cachedWeathersLiveData.value, i, i + 1)
+            }
+        } else {
+            for (i in fromPosition downTo toPosition + 1) {
+                Collections.swap(viewModel.cachedWeathersLiveData.value, i, i - 1)
+            }
+        }
+        swapItemsOrderIndexes(fromPosition, toPosition)
+
+        itemInteractionInterface.onCachedWeatherItemMoved(fromPosition, toPosition)
+
+        notifyItemMoved(fromPosition, toPosition)
+
+        return true
+    }
+
+    override fun onItemDismiss(position: Int) {
+        Log.e("LOG_TAG", "onItemDismiss => position: $position")
+    }
+
+    //TODO Update in database
+    private fun swapItemsOrderIndexes(fromPosition: Int, toPosition: Int) {
+        Log.e("LOG_TAG", "swapItemsOrderIndexes")
+        viewModel.cachedWeathersLiveData.value?.let {
+            val tempFromPosition: Int = it[fromPosition].orderIndex
+            it[fromPosition].orderIndex = it[toPosition].orderIndex
+            it[toPosition].orderIndex = tempFromPosition
+        }
     }
 
 }

@@ -19,10 +19,10 @@ interface CurrentDAO {
     fun updateCurrent(vararg currents: Current): Int
 
     @Query("DELETE FROM current WHERE queryId = :queryId")
-    fun deleteCurrentByQueryId(queryId: String?): Int
+    fun deleteCurrentByQueryId(queryId: String): Int
 
     @Query("SELECT * FROM current WHERE queryId = :queryId")
-    fun getCurrentByQueryId(queryId: String?): Current?
+    fun getCurrentByQueryId(queryId: String): Current?
 
     @Query("SELECT * FROM current")
     fun getAllCachedCurrents(): List<Current>

@@ -4,4 +4,5 @@
     <dimen name="sizeTextSmall">16sp</dimen>
     <dimen name="main_screen_padding_horizontal">8dp</dimen>
     <dimen name="main_screen_padding_vertical">8dp</dimen>
+    <dimen name="navigation_button_width">75dp</dimen>
 </resources>

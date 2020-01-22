@@ -21,9 +21,11 @@ class WeatherSearchFragment : DaggerFragmentX() {
 
     companion object {
         private const val ARG_REQUEST_FOCUS = "arg_request_focus"
-        fun newInstance(requestFocus: Boolean = false) = WeatherSearchFragment().apply {
+        private const val ARG_CACHED_SIZE = "arg_cached_size"
+        fun newInstance(requestFocus: Boolean = false, cachedSize: Int) = WeatherSearchFragment().apply {
             arguments = Bundle().apply {
                 putBoolean(ARG_REQUEST_FOCUS, requestFocus)
+                putInt(ARG_CACHED_SIZE, cachedSize)
             }
         }
     }
@@ -45,6 +47,10 @@ class WeatherSearchFragment : DaggerFragmentX() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        val orderId: Int = arguments?.getInt(ARG_CACHED_SIZE, 0) ?: 0
+
+        viewModel.orderId = orderId + 1
         binding.viewModel = viewModel
 
         setupToolbar()

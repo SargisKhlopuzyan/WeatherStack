@@ -5,4 +5,6 @@
 
     <string name="wind">Wind: %s</string>
     <string name="direction">Direction: %s</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>

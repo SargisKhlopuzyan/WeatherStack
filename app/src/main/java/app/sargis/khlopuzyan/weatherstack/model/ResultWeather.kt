@@ -77,7 +77,11 @@ data class Current(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0.toLong(),
 
-    var queryId: String? = "",
+    var queryId: String = "",
+
+    var orderIndex: Int = 0,
+
+    var isSelected: Boolean = false,
 
     @Json(name = "cloudcover")
     val cloudCover: Int,

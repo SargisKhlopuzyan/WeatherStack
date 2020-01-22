@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 class WeatherSearchViewModel constructor(private var weatherSearchRepository: WeatherSearchRepository) :
     ViewModel() {
 
+    var orderId: Int = 0
+
     private var location: String = ""
     private var searchQuery: String = ""
 
@@ -51,14 +53,11 @@ class WeatherSearchViewModel constructor(private var weatherSearchRepository: We
      * */
     fun onWeatherItemClick(current: Current) {
 
-        current.queryId?.let {
+        val cachedCurrent = weatherSearchRepository.getWeatherFromCache(current.queryId)
 
-            var cachedCurrent = weatherSearchRepository.getWeatherFromCache(current.queryId!!)
-
-            if (cachedCurrent == null) {
-                weatherSearchRepository.saveWeatherInCache(current)
-            }
-
+        if (cachedCurrent == null) {
+            current.orderIndex = orderId
+            weatherSearchRepository.saveWeatherInCache(current)
         }
 
         openCachedWeatherLiveData.value = current
@@ -83,7 +82,7 @@ class WeatherSearchViewModel constructor(private var weatherSearchRepository: We
 
         weatherLiveData.value = mutableListOf()
 
-        if (location == null || location.isBlank()) {
+        if (location.isNullOrBlank()) {
             return
         }
 
@@ -124,7 +123,7 @@ class WeatherSearchViewModel constructor(private var weatherSearchRepository: We
      * */
     private fun handleSearchResult(resultWeather: ResultWeather?) {
 
-        var currents: MutableList<Current>? =
+        val currents: MutableList<Current>? =
             if (resultWeather?.current == null) {
                 mutableListOf()
             } else {
