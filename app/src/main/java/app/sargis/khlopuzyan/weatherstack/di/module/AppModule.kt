@@ -68,10 +68,13 @@ abstract class AppModule {
         @Provides
         @Singleton
         fun provideCachedWeatherRepository(
-            databaseManager: DatabaseManager
+            databaseManager: DatabaseManager,
+            apiService: ApiService
         ): CachedWeatherRepository =
             CachedWeatherRepositoryImpl(
-                databaseManager
+                databaseManager,
+                apiService,
+                CoroutineScope(Job() + Dispatchers.IO)
             )
 
         @Provides

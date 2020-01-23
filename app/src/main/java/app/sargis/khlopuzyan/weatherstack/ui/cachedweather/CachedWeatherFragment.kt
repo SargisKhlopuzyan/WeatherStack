@@ -10,6 +10,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import app.sargis.khlopuzyan.weatherstack.R
 import app.sargis.khlopuzyan.weatherstack.databinding.FragmentCachedWeatherBinding
 import app.sargis.khlopuzyan.weatherstack.model.Current
@@ -71,7 +72,6 @@ class CachedWeatherFragment : DaggerFragmentX() {
             viewModel
         )
         binding.recyclerView.adapter = adapter
-
 
         val callback: ItemTouchHelper.Callback =
             SimpleItemTouchHelperCallback(

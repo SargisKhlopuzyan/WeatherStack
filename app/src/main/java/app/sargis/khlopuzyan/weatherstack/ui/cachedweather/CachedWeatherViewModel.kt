@@ -4,10 +4,15 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import app.sargis.khlopuzyan.weatherstack.helper.SingleLiveEvent
 import app.sargis.khlopuzyan.weatherstack.model.Current
+import app.sargis.khlopuzyan.weatherstack.networking.callback.Result
 import app.sargis.khlopuzyan.weatherstack.repository.CachedWeatherRepository
 import app.sargis.khlopuzyan.weatherstack.util.StateMode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CachedWeatherViewModel constructor(var cachedWeatherRepository: CachedWeatherRepository) :
     ViewModel() {
@@ -19,6 +24,7 @@ class CachedWeatherViewModel constructor(var cachedWeatherRepository: CachedWeat
         MutableLiveData<List<Current>>(cachedWeatherRepository.getAllCachedWeathers())
 
     var stateModeLiveData = MutableLiveData(StateMode.Normal)
+    var isRefreshingLiveData = MutableLiveData(false)
 
     var selectedCurrent = mutableListOf<Current>()
     /**
@@ -83,5 +89,45 @@ class CachedWeatherViewModel constructor(var cachedWeatherRepository: CachedWeat
         }
         cachedWeathersLiveData.value = currents
     }
+
+    val refreshListener = object : SwipeRefreshLayout.OnRefreshListener {
+        override fun onRefresh() {
+            Log.e("LOG_TAG", "SwipeRefreshLayout.OnRefreshListener")
+            isRefreshingLiveData.value = true
+            updateAllCachedWeathers()
+        }
+    }
+
+    private fun updateAllCachedWeathers() {
+        cachedWeathersLiveData.value?.let {
+            viewModelScope.launch(Dispatchers.Main) {
+                for (cachedWeather in it) {
+
+                    when (val resultCurrentWeather =
+                        cachedWeatherRepository.searchCurrentWeather(cachedWeather.queryId)) {
+
+                        is Result.Success -> {
+                            val cacheResult = cachedWeatherRepository.updateWeatherInDatabase(resultCurrentWeather.data.current)
+                            Log.e("LOG_TAG", "updateAllCachedWeathers => Success => cacheResult: $cacheResult")
+                        }
+
+                        is Result.Error -> {
+                            Log.e("LOG_TAG", "updateAllCachedWeathers")
+                        }
+
+                        is Result.Failure -> {
+                            Log.e("LOG_TAG", "updateAllCachedWeathers => Failure")
+                        }
+                    }
+                }
+
+                Log.e("LOG_TAG", "updateAllCachedWeathers => Failure")
+                isRefreshingLiveData.value = false
+                //TODO
+            }
+        }
+    }
+
+
 }
 

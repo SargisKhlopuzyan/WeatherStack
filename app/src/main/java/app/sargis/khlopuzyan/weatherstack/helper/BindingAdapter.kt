@@ -3,25 +3,22 @@ package app.sargis.khlopuzyan.weatherstack.helper
 
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.view.View
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import app.sargis.khlopuzyan.weatherstack.R
 import app.sargis.khlopuzyan.weatherstack.ui.common.BindableAdapter
 import app.sargis.khlopuzyan.weatherstack.util.DataLoadingState
-import app.sargis.khlopuzyan.weatherstack.util.StateMode
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import kotlinx.android.synthetic.main.layout_recycler_view_item_cached_weathers.view.*
 
 /**
  * Created by Sargis Khlopuzyan, on 1/15/2020.
@@ -60,6 +57,19 @@ fun TextView.setWeatherDescriptions(weatherDescriptions: List<String>?) {
         text = tracksStringBuilder.toString()
     }
 }
+
+//@BindingAdapter("setRefreshing")
+//fun SwipeRefreshLayout.setRefreshing(isRefreshing: Boolean?) {
+//    isRefreshing?.let {
+//        this.isRefreshing = isRefreshing
+//    }
+//}
+
+@BindingAdapter("setOnRefreshListener")
+fun SwipeRefreshLayout.setOnRefreshListener(onRefreshListener: SwipeRefreshLayout.OnRefreshListener) {
+    this.setOnRefreshListener(onRefreshListener)
+}
+
 
 @BindingAdapter("setImageResource")
 fun ImageView.setImageResource(resource: List<String>?) {

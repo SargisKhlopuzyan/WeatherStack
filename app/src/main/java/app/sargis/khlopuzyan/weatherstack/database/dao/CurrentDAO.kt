@@ -16,7 +16,10 @@ interface CurrentDAO {
     fun insertCurrent(current: Current): Long
 
     @Update
-    fun updateCurrent(currents: List<Current>): Int
+    fun updateCurrents(currents: List<Current>): Int
+
+    @Update
+    fun updateCurrent(current: Current): Int
 
     @Query("DELETE FROM current WHERE queryId = :queryId")
     fun deleteCurrentByQueryId(queryId: String): Int

@@ -4,6 +4,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import app.sargis.khlopuzyan.weatherstack.R
 import app.sargis.khlopuzyan.weatherstack.databinding.LayoutRecyclerViewItemCachedWeathersBinding
@@ -21,64 +23,35 @@ import java.util.*
  */
 class CachedWeatherAdapter(
     val viewModel: CachedWeatherViewModel
-) : RecyclerView.Adapter<CachedWeatherAdapter.ViewHolder>(), BindableAdapter<List<Current>>,
+) : ListAdapter<Current?, RecyclerView.ViewHolder>(DiffCallback()), BindableAdapter<List<Current>>,
     ItemTouchHelperAdapter {
 
-    private var storedWeathers = mutableListOf<Current>()
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CachedWeatherViewHolder {
         val binding: LayoutRecyclerViewItemCachedWeathersBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
             R.layout.layout_recycler_view_item_cached_weathers,
             parent, false
         )
-        return ViewHolder(
+        return CachedWeatherViewHolder(
             binding
         )
     }
 
-    override fun getItemCount(): Int {
-        return storedWeathers.size
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindData(storedWeathers[position], viewModel, position)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        (holder as CachedWeatherViewHolder).bindItem(getItem(position), viewModel, position)
     }
 
     override fun setItems(items: List<Current>?) {
-        storedWeathers.clear()
-        items?.let {
-            storedWeathers.addAll(items)
+        if (items.isNullOrEmpty()) {
+            submitList(listOf())
+        } else {
+            submitList(items)
         }
-        notifyDataSetChanged()
     }
 
     override fun setDataLoadingState(dataLoadingState: DataLoadingState?) {
-
-    }
-
-    class ViewHolder(binding: LayoutRecyclerViewItemCachedWeathersBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        var binding: LayoutRecyclerViewItemCachedWeathersBinding = binding
-
-        fun bindData(current: Current, viewModel: CachedWeatherViewModel, position: Int) {
-            binding.viewModel = viewModel
-            binding.current = current
-
-            if (viewModel.stateModeLiveData.value != StateMode.Normal) {
-                binding.checkBox.isChecked = current.isSelected
-            }
-
-            binding.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
-                current.isSelected = isChecked
-                if (isChecked) {
-                    viewModel.addCurrentInSelected(current)
-                } else {
-                    viewModel.removeCurrentFromSelected(current)
-                }
-            }
-        }
+        val pos = if (itemCount > 0) itemCount - 1 else 0
+        notifyItemChanged(pos)
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
@@ -104,7 +77,6 @@ class CachedWeatherAdapter(
         Log.e("LOG_TAG", "onItemDismiss => position: $position")
     }
 
-    //TODO Update in database
     private fun swapItemsOrderIndexes(fromPosition: Int, toPosition: Int) {
         viewModel.cachedWeathersLiveData.value?.let {
             val tempFromPosition: Int = it[fromPosition].orderIndex
@@ -113,4 +85,45 @@ class CachedWeatherAdapter(
         }
     }
 
+    // ViewHolder
+
+    class CachedWeatherViewHolder(binding: LayoutRecyclerViewItemCachedWeathersBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        var binding: LayoutRecyclerViewItemCachedWeathersBinding = binding
+
+        fun bindItem(current: Current?, viewModel: CachedWeatherViewModel, position: Int) {
+            binding.viewModel = viewModel
+            binding.current = current
+
+            current?.let {
+
+                if (viewModel.stateModeLiveData.value != StateMode.Normal) {
+                    binding.checkBox.isChecked = current.isSelected
+                }
+
+                binding.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+                    current.isSelected = isChecked
+                    if (isChecked) {
+                        viewModel.addCurrentInSelected(current)
+                    } else {
+                        viewModel.removeCurrentFromSelected(current)
+                    }
+                }
+            }
+        }
+    }
+
+    //Callback
+
+    class DiffCallback : DiffUtil.ItemCallback<Current?>() {
+
+        override fun areItemsTheSame(oldItem: Current, newItem: Current): Boolean {
+            return oldItem.queryId == newItem.queryId
+        }
+
+        override fun areContentsTheSame(oldItem: Current, newItem: Current): Boolean {
+            return oldItem == newItem
+        }
+    }
 }
