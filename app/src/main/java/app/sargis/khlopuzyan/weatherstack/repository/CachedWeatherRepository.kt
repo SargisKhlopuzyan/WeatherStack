@@ -11,7 +11,9 @@ import app.sargis.khlopuzyan.weatherstack.model.Current
  */
 interface CachedWeatherRepository {
     fun saveWeatherInCache(current: Current): Long
+    fun updateWeathersInDatabase(currents: List<Current>): Int
     fun deleteWeatherFromCache(current: Current): Int
+    fun getAllCachedWeathers(): List<Current>
     fun getAllCachedWeathersLiveData(): LiveData<List<Current>?>
 }
 
@@ -26,8 +28,16 @@ class CachedWeatherRepositoryImpl(
         return databaseManager.saveWeatherInDatabase(current)
     }
 
+    override fun updateWeathersInDatabase(currents: List<Current>): Int {
+        return databaseManager.updateWeatherInDatabase(currents)
+    }
+
     override fun deleteWeatherFromCache(current: Current): Int {
         return databaseManager.deleteWeatherFromDatabase(current)
+    }
+
+    override fun getAllCachedWeathers(): List<Current> {
+        return databaseManager.getAllCachedWeathersFromDatabase()
     }
 
     override fun getAllCachedWeathersLiveData(): LiveData<List<Current>?> {

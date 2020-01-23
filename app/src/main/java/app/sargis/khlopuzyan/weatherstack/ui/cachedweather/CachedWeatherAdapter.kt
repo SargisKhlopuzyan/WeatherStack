@@ -9,8 +9,6 @@ import app.sargis.khlopuzyan.weatherstack.R
 import app.sargis.khlopuzyan.weatherstack.databinding.LayoutRecyclerViewItemCachedWeathersBinding
 import app.sargis.khlopuzyan.weatherstack.model.Current
 import app.sargis.khlopuzyan.weatherstack.ui.common.BindableAdapter
-import app.sargis.khlopuzyan.weatherstack.ui.weathersearch.ItemInteractionInterface
-import app.sargis.khlopuzyan.weatherstack.ui.weathersearch.ItemTouchHelperAdapter
 import app.sargis.khlopuzyan.weatherstack.util.DataLoadingState
 import app.sargis.khlopuzyan.weatherstack.util.StateMode
 import java.util.*
@@ -22,8 +20,7 @@ import java.util.*
  * @author Sargis Khlopuzyan (sargis.khlopuzyan@gmail.com)
  */
 class CachedWeatherAdapter(
-    val viewModel: CachedWeatherViewModel,
-    private val itemInteractionInterface: ItemInteractionInterface
+    val viewModel: CachedWeatherViewModel
 ) : RecyclerView.Adapter<CachedWeatherAdapter.ViewHolder>(), BindableAdapter<List<Current>>,
     ItemTouchHelperAdapter {
 
@@ -82,12 +79,11 @@ class CachedWeatherAdapter(
                 }
             }
         }
-
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
 
-        Log.e("LOG_TAG", "onItemMove")
+        Log.e("LOG_TAG", "onItemMove => fromPosition: $fromPosition, toPosition: $toPosition")
 
         if (fromPosition < toPosition) {
             for (i in fromPosition until toPosition) {
@@ -99,11 +95,8 @@ class CachedWeatherAdapter(
             }
         }
         swapItemsOrderIndexes(fromPosition, toPosition)
-
-        itemInteractionInterface.onCachedWeatherItemMoved(fromPosition, toPosition)
-
+        viewModel.onItemMove(fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
-
         return true
     }
 
@@ -113,7 +106,6 @@ class CachedWeatherAdapter(
 
     //TODO Update in database
     private fun swapItemsOrderIndexes(fromPosition: Int, toPosition: Int) {
-        Log.e("LOG_TAG", "swapItemsOrderIndexes")
         viewModel.cachedWeathersLiveData.value?.let {
             val tempFromPosition: Int = it[fromPosition].orderIndex
             it[fromPosition].orderIndex = it[toPosition].orderIndex

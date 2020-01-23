@@ -14,17 +14,16 @@ import app.sargis.khlopuzyan.weatherstack.R
 import app.sargis.khlopuzyan.weatherstack.databinding.FragmentCachedWeatherBinding
 import app.sargis.khlopuzyan.weatherstack.model.Current
 import app.sargis.khlopuzyan.weatherstack.ui.common.DaggerFragmentX
-import app.sargis.khlopuzyan.weatherstack.ui.weathersearch.ItemInteractionInterface
-import app.sargis.khlopuzyan.weatherstack.ui.weathersearch.SimpleItemTouchHelperCallback
 import app.sargis.khlopuzyan.weatherstack.ui.weathersearch.WeatherSearchFragment
 import app.sargis.khlopuzyan.weatherstack.util.StateMode
 import javax.inject.Inject
 
 
-class CachedWeatherFragment : DaggerFragmentX(), ItemInteractionInterface {
+class CachedWeatherFragment : DaggerFragmentX() {
 
     companion object {
         fun newInstance() = CachedWeatherFragment()
+        const val TARGET_FRAGMENT_REQUEST_CODE = 0
     }
 
     @Inject
@@ -69,12 +68,15 @@ class CachedWeatherFragment : DaggerFragmentX(), ItemInteractionInterface {
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.hasFixedSize()
         val adapter = CachedWeatherAdapter(
-            viewModel, this
+            viewModel
         )
         binding.recyclerView.adapter = adapter
 
 
-        val callback: ItemTouchHelper.Callback = SimpleItemTouchHelperCallback(adapter)
+        val callback: ItemTouchHelper.Callback =
+            SimpleItemTouchHelperCallback(
+                adapter
+            )
         touchHelper = ItemTouchHelper(callback)
     }
 
@@ -83,14 +85,14 @@ class CachedWeatherFragment : DaggerFragmentX(), ItemInteractionInterface {
             openWeatherSearchScreen()
         }
 
-        viewModel.enableEditModeLiveData.observe(this) {
-            enableEditMode()
+        viewModel.updateEditModeLiveData.observe(this) {
             setRecyclerViewAnimationState()
+            updateCachedWeathersList()
         }
     }
 
     private fun setRecyclerViewAnimationState() {
-        if(viewModel.stateModeLiveData.value == StateMode.Normal) {
+        if (viewModel.stateModeLiveData.value == StateMode.Normal) {
             touchHelper?.attachToRecyclerView(null)
         } else {
             touchHelper?.attachToRecyclerView(binding.recyclerView)
@@ -98,38 +100,28 @@ class CachedWeatherFragment : DaggerFragmentX(), ItemInteractionInterface {
     }
 
     private fun openWeatherSearchScreen() {
+
+        val weatherSearchFragment = WeatherSearchFragment.newInstance(
+            requestFocus = true,
+            cachedSize = viewModel.getCachedWeathersSize()
+        )
+
+        weatherSearchFragment.setTargetFragment(this, TARGET_FRAGMENT_REQUEST_CODE)
+
         activity?.supportFragmentManager?.commit {
             replace(
                 R.id.content,
-                WeatherSearchFragment.newInstance(requestFocus = true, cachedSize = viewModel.getCachedWeathersSize()),
+                weatherSearchFragment,
                 "weather_search_fragment"
             ).addToBackStack("weather_search")
         }
     }
 
-    private fun enableEditMode(
-    ) {
+    private fun updateCachedWeathersList() {
         binding.recyclerView.adapter?.notifyDataSetChanged()
     }
 
-
-
-    override fun onCachedWeatherItemDismiss(
-        currents: List<Current?>?,
-        deletedCurrent: Current?,
-        position: Int
-    ) {
-
-    }
-
-    override fun onCachedWeatherItemMoved(fromPosition: Int, toPosition: Int) {
-    }
-
-    override fun onCachedWeatherItemSelectedStateChanged(
-        current: Current?,
-        itemsSize: Int,
-        position: Int,
-        isSelected: Boolean?
-    ) {
+    fun saveWeatherInCachedList(current: Current) {
+        viewModel.saveWeatherInCachedList(current)
     }
 }

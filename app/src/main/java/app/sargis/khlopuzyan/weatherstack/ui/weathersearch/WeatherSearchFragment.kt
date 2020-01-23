@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.sargis.khlopuzyan.weatherstack.R
 import app.sargis.khlopuzyan.weatherstack.databinding.FragmentWeatherSearchBinding
 import app.sargis.khlopuzyan.weatherstack.model.Current
+import app.sargis.khlopuzyan.weatherstack.ui.cachedweather.CachedWeatherFragment
 import app.sargis.khlopuzyan.weatherstack.ui.common.DaggerFragmentX
 import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
@@ -110,7 +111,11 @@ class WeatherSearchFragment : DaggerFragmentX() {
     private fun openCachedWeatherFragment(
         current: Current
     ) {
-        activity?.onBackPressed()
+        if(targetFragment != null && targetFragment is CachedWeatherFragment) {
+            (targetFragment as CachedWeatherFragment).saveWeatherInCachedList(current)
+        }
+//        activity?.onBackPressed()
+        activity?.supportFragmentManager?.popBackStack()
     }
 
 }

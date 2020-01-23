@@ -1,8 +1,7 @@
-package app.sargis.khlopuzyan.weatherstack.ui.weathersearch
+package app.sargis.khlopuzyan.weatherstack.ui.cachedweather
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import app.sargis.khlopuzyan.weatherstack.ui.cachedweather.CachedWeatherAdapter
 
 /**
  * Created by Sargis Khlopuzyan, on 1/22/2020.
@@ -17,7 +16,7 @@ class SimpleItemTouchHelperCallback(var adapter: CachedWeatherAdapter) :
         viewHolder: RecyclerView.ViewHolder
     ): Int {
         val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
-        val swipeFlags = ItemTouchHelper.START or ItemTouchHelper.END
+        val swipeFlags = ItemTouchHelper.ACTION_STATE_IDLE
         return makeMovementFlags(
             dragFlags,
             swipeFlags

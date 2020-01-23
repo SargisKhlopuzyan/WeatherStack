@@ -9,13 +9,15 @@ import app.sargis.khlopuzyan.weatherstack.model.Current
 import app.sargis.khlopuzyan.weatherstack.repository.CachedWeatherRepository
 import app.sargis.khlopuzyan.weatherstack.util.StateMode
 
-class CachedWeatherViewModel constructor(cachedWeatherRepository: CachedWeatherRepository) :
+class CachedWeatherViewModel constructor(var cachedWeatherRepository: CachedWeatherRepository) :
     ViewModel() {
 
     val openWeatherSearchLiveData: SingleLiveEvent<View> = SingleLiveEvent()
-    val enableEditModeLiveData: SingleLiveEvent<View> = SingleLiveEvent()
+    val updateEditModeLiveData: SingleLiveEvent<View> = SingleLiveEvent()
 
-    var cachedWeathersLiveData = cachedWeatherRepository.getAllCachedWeathersLiveData()
+    var cachedWeathersLiveData =
+        MutableLiveData<List<Current>>(cachedWeatherRepository.getAllCachedWeathers())
+
     var stateModeLiveData = MutableLiveData(StateMode.Normal)
 
     var selectedCurrent = mutableListOf<Current>()
@@ -31,7 +33,7 @@ class CachedWeatherViewModel constructor(cachedWeatherRepository: CachedWeatherR
      * */
     fun onEditClick(v: View) {
         stateModeLiveData.value = StateMode.Edit
-        enableEditModeLiveData.value = v
+        updateEditModeLiveData.value = v
         Log.e("LOG_TAG", "stateModeLiveData.value: ${stateModeLiveData.value}")
     }
 
@@ -49,8 +51,9 @@ class CachedWeatherViewModel constructor(cachedWeatherRepository: CachedWeatherR
             current.isSelected = false
         }
         selectedCurrent.clear()
+        cachedWeathersLiveData.value = cachedWeathersLiveData.value
         stateModeLiveData.value = StateMode.Normal
-        enableEditModeLiveData.value = v
+        updateEditModeLiveData.value = v
     }
 
     fun getCachedWeathersSize() = cachedWeathersLiveData.value?.size ?: 0
@@ -61,6 +64,24 @@ class CachedWeatherViewModel constructor(cachedWeatherRepository: CachedWeatherR
 
     fun removeCurrentFromSelected(current: Current) {
         selectedCurrent.remove(current)
+    }
+
+    fun onItemMove(fromPosition: Int, toPosition: Int) {
+        cachedWeathersLiveData.value?.let {
+            var items = listOf(
+                cachedWeathersLiveData.value!![fromPosition],
+                cachedWeathersLiveData.value!![toPosition]
+            )
+            cachedWeatherRepository.updateWeathersInDatabase(items)
+        }
+    }
+
+    fun saveWeatherInCachedList(current: Current) {
+        val currents = mutableListOf(current)
+        cachedWeathersLiveData.value?.let {
+            currents.addAll(it)
+        }
+        cachedWeathersLiveData.value = currents
     }
 }
 

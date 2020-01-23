@@ -16,7 +16,7 @@ interface CurrentDAO {
     fun insertCurrent(current: Current): Long
 
     @Update
-    fun updateCurrent(vararg currents: Current): Int
+    fun updateCurrent(currents: List<Current>): Int
 
     @Query("DELETE FROM current WHERE queryId = :queryId")
     fun deleteCurrentByQueryId(queryId: String): Int
@@ -24,10 +24,10 @@ interface CurrentDAO {
     @Query("SELECT * FROM current WHERE queryId = :queryId")
     fun getCurrentByQueryId(queryId: String): Current?
 
-    @Query("SELECT * FROM current")
+    @Query("SELECT * FROM current ORDER BY orderIndex DESC")
     fun getAllCachedCurrents(): List<Current>
 
-    @Query("SELECT * FROM current")
+    @Query("SELECT * FROM current ORDER BY orderIndex DESC")
     fun getAllCachedCurrentsLiveData(): LiveData<List<Current>?>
 
 }
