@@ -25,7 +25,7 @@ class DatabaseManager @Inject constructor(var context: Context) {
     }
 
     fun deleteWeatherFromDatabase(current: Current): Int {
-        return CurrentDatabase.getInstance(context).getCurrentDAO().deleteCurrentByQueryId(current.queryId)
+        return CurrentDatabase.getInstance(context).getCurrentDAO().deleteCurrentByQueryId(current.query)
     }
 
     fun getWeatherFromDatabase(name: String): Current? {

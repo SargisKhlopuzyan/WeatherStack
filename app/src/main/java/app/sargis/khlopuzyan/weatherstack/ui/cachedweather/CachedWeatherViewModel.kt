@@ -19,20 +19,18 @@ class CachedWeatherViewModel constructor(var cachedWeatherRepository: CachedWeat
 
     val openWeatherSearchLiveData: SingleLiveEvent<View> = SingleLiveEvent()
     val updateEditModeLiveData: SingleLiveEvent<View> = SingleLiveEvent()
+    val updateListElementLiveData: SingleLiveEvent<Int> = SingleLiveEvent()
 
     var cachedWeathersLiveData =
         MutableLiveData<List<Current>>(cachedWeatherRepository.getAllCachedWeathers())
 
     var stateModeLiveData = MutableLiveData(StateMode.Normal)
+    var isDeleteActiveLiveData = MutableLiveData(true)
+    var isAllSelectedLiveData = MutableLiveData(false)
+
     var isRefreshingLiveData = MutableLiveData(false)
 
     var selectedCurrent = mutableListOf<Current>()
-    /**
-     * Handles search icon click
-     * */
-    fun onSearchClick(v: View) {
-        openWeatherSearchLiveData.value = v
-    }
 
     /**
      * Handles album list item click
@@ -50,16 +48,42 @@ class CachedWeatherViewModel constructor(var cachedWeatherRepository: CachedWeat
     }
 
     /**
-     * Handles navigation back item click
+     * Handles album list item click
+     * */
+    fun onSelectAllClick(v: View) {
+    }
+
+    /**
+     * Handles navigation item click
      * */
     fun onNavigationClick(v: View) {
+        if (stateModeLiveData.value == StateMode.Normal) {
+            Log.e("LOG_TAG", "onSearchClick")
+            doSearch(v)
+        } else {
+            Log.e("LOG_TAG", "cancelEditModeClick")
+            cancelEditMode(v)
+        }
+    }
+
+    /**
+     * Handles search icon click
+     * */
+    private fun doSearch(v: View) {
+        openWeatherSearchLiveData.value = v
+    }
+
+    private fun cancelEditMode(v: View) {
+
         for (current in selectedCurrent) {
             current.isSelected = false
         }
+
         selectedCurrent.clear()
         cachedWeathersLiveData.value = cachedWeathersLiveData.value
         stateModeLiveData.value = StateMode.Normal
         updateEditModeLiveData.value = v
+
     }
 
     fun getCachedWeathersSize() = cachedWeathersLiveData.value?.size ?: 0
@@ -90,25 +114,36 @@ class CachedWeatherViewModel constructor(var cachedWeatherRepository: CachedWeat
         cachedWeathersLiveData.value = currents
     }
 
-    val refreshListener = object : SwipeRefreshLayout.OnRefreshListener {
-        override fun onRefresh() {
-            Log.e("LOG_TAG", "SwipeRefreshLayout.OnRefreshListener")
-            isRefreshingLiveData.value = true
-            updateAllCachedWeathers()
-        }
+    val refreshListener = SwipeRefreshLayout.OnRefreshListener {
+        Log.e("LOG_TAG", "SwipeRefreshLayout.OnRefreshListener")
+        isRefreshingLiveData.value = true
+        updateAllCachedWeathers()
     }
 
     private fun updateAllCachedWeathers() {
         cachedWeathersLiveData.value?.let {
             viewModelScope.launch(Dispatchers.Main) {
-                for (cachedWeather in it) {
+                for ((index, cachedWeather) in it.withIndex()) {
 
                     when (val resultCurrentWeather =
-                        cachedWeatherRepository.searchCurrentWeather(cachedWeather.queryId)) {
+                        cachedWeatherRepository.searchCurrentWeather(cachedWeather.query)) {
 
                         is Result.Success -> {
-                            val cacheResult = cachedWeatherRepository.updateWeatherInDatabase(resultCurrentWeather.data.current)
-                            Log.e("LOG_TAG", "updateAllCachedWeathers => Success => cacheResult: $cacheResult")
+
+                            resultCurrentWeather.data.current.id = cachedWeather.id
+                            resultCurrentWeather.data.current.query = cachedWeather.query
+                            resultCurrentWeather.data.current.orderIndex = cachedWeather.orderIndex
+
+                            val cacheResult =
+                                cachedWeatherRepository.updateWeatherInDatabase(resultCurrentWeather.data.current)
+
+                            if (cacheResult == 1) {
+                                updateListElementLiveData.value = index
+                            }
+                            Log.e(
+                                "LOG_TAG",
+                                "updateAllCachedWeathers => Success => cacheResult: $cacheResult"
+                            )
                         }
 
                         is Result.Error -> {
@@ -121,13 +156,12 @@ class CachedWeatherViewModel constructor(var cachedWeatherRepository: CachedWeat
                     }
                 }
 
-                Log.e("LOG_TAG", "updateAllCachedWeathers => Failure")
+                Log.e("LOG_TAG", "updateAllCachedWeathers => FINISH UPDATING")
                 isRefreshingLiveData.value = false
                 //TODO
             }
         }
     }
-
 
 }
 

@@ -77,7 +77,7 @@ data class Current(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0.toLong(),
 
-    var queryId: String = "",
+    var query: String = "",
 
     var orderIndex: Int = 0,
 

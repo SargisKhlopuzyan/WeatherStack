@@ -22,7 +22,7 @@ class WeatherSearchViewModel constructor(private var weatherSearchRepository: We
     private var location: String = ""
     private var searchQuery: String = ""
 
-    val openCachedWeatherLiveData: SingleLiveEvent<Current> = SingleLiveEvent()
+    val openCachedWeatherLiveData: SingleLiveEvent<Pair<Current, Boolean>> = SingleLiveEvent()
     val hideKeyboardLiveData: SingleLiveEvent<View> = SingleLiveEvent()
     val showToastLiveData: SingleLiveEvent<String> = SingleLiveEvent()
 
@@ -53,14 +53,16 @@ class WeatherSearchViewModel constructor(private var weatherSearchRepository: We
      * */
     fun onWeatherItemClick(current: Current) {
 
-        val cachedCurrent = weatherSearchRepository.getWeatherFromCache(current.queryId)
+        val cachedCurrent = weatherSearchRepository.getWeatherFromCache(current.query)
 
         if (cachedCurrent == null) {
             current.orderIndex = orderId
             weatherSearchRepository.saveWeatherInCache(current)
+            openCachedWeatherLiveData.value = Pair(current, true)
+        } else {
+            openCachedWeatherLiveData.value = Pair(current, false)
         }
 
-        openCachedWeatherLiveData.value = current
     }
 
     val onQueryTextListener = object : SearchView.OnQueryTextListener {
@@ -127,7 +129,7 @@ class WeatherSearchViewModel constructor(private var weatherSearchRepository: We
             if (resultWeather?.current == null) {
                 mutableListOf()
             } else {
-                resultWeather.current.queryId = resultWeather.request.query
+                resultWeather.current.query = resultWeather.request.query
                 mutableListOf(resultWeather.current)
             }
 

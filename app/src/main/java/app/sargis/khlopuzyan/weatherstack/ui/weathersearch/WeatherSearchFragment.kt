@@ -89,7 +89,7 @@ class WeatherSearchFragment : DaggerFragmentX() {
 
     private fun setupObservers() {
         viewModel.openCachedWeatherLiveData.observe(this) {
-            openCachedWeatherFragment(it)
+            openCachedWeatherFragment(it.first, it.second)
         }
 
         viewModel.showToastLiveData.observe(this) {
@@ -109,12 +109,12 @@ class WeatherSearchFragment : DaggerFragmentX() {
     }
 
     private fun openCachedWeatherFragment(
-        current: Current
+        current: Current,
+        isAddedInCashe: Boolean
     ) {
-        if(targetFragment != null && targetFragment is CachedWeatherFragment) {
+        if(targetFragment != null && targetFragment is CachedWeatherFragment && isAddedInCashe) {
             (targetFragment as CachedWeatherFragment).saveWeatherInCachedList(current)
         }
-//        activity?.onBackPressed()
         activity?.supportFragmentManager?.popBackStack()
     }
 

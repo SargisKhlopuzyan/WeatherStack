@@ -119,7 +119,7 @@ class CachedWeatherAdapter(
     class DiffCallback : DiffUtil.ItemCallback<Current?>() {
 
         override fun areItemsTheSame(oldItem: Current, newItem: Current): Boolean {
-            return oldItem.queryId == newItem.queryId
+            return oldItem.query == newItem.query
         }
 
         override fun areContentsTheSame(oldItem: Current, newItem: Current): Boolean {

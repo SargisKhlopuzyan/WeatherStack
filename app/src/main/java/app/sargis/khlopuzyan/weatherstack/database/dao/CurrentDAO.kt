@@ -21,10 +21,10 @@ interface CurrentDAO {
     @Update
     fun updateCurrent(current: Current): Int
 
-    @Query("DELETE FROM current WHERE queryId = :queryId")
+    @Query("DELETE FROM current WHERE `query` = :queryId")
     fun deleteCurrentByQueryId(queryId: String): Int
 
-    @Query("SELECT * FROM current WHERE queryId = :queryId")
+    @Query("SELECT * FROM current WHERE `query` = :queryId")
     fun getCurrentByQueryId(queryId: String): Current?
 
     @Query("SELECT * FROM current ORDER BY orderIndex DESC")

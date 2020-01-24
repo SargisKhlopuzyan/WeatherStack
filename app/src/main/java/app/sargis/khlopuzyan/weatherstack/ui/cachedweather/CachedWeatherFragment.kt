@@ -89,6 +89,10 @@ class CachedWeatherFragment : DaggerFragmentX() {
             setRecyclerViewAnimationState()
             updateCachedWeathersList()
         }
+
+        viewModel.updateListElementLiveData.observe(this) {
+            binding.recyclerView.adapter?.notifyItemChanged(it)
+        }
     }
 
     private fun setRecyclerViewAnimationState() {

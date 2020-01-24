@@ -6,13 +6,12 @@ package app.sargis.khlopuzyan.weatherstack.util
  * @author Sargis Khlopuzyan (sargis.khlopuzyan@fcc.am)
  */
 
-enum class StateMode constructor(var index: Int){
+enum class StateMode constructor(var index: Int) {
 
     Normal(0),
-    Edit(1),
-    Delete(2);
+    Edit(1);
 
-    public fun getStateModeIndex(): Int {
+    fun getStateModeIndex(): Int {
         return index
     }
 }
